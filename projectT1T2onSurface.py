@@ -1,9 +1,20 @@
 from soma import aims
 import numpy as np
 
+t=0.8
 
 def projectOnSurface(myelin, surface):
+    norm=surface.normal()
+    vert=surface.vertex()
+    Nv=vert.size
 
+    surfMap=aims.TimeTexture('float')
+    surfMap[0].resize(Nv)
+
+    for i in range(Nv):
+        v=vert[i]+t*norm[i]
+        val=myelin(v)
+        surfMap[0][i]=val
     return surfMap
 
 
