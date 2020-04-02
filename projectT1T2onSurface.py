@@ -2,19 +2,28 @@ from soma import aims
 import numpy as np
 
 
-def projectOnSurface()
+def projectOnSurface(myelin, surface):
+
+    return surfMap
 
 
 def main(arguments):
-    if len(arguments)==3:
+    if len(arguments)==4:
         myelinN=arguments[1]
         surfaceN=arguments[2]
-        r=aims.Reader()
+        surfMapN=arguments[3]
 
-        projectOnSurface(myelin, surface)
+        r=aims.Reader()
+        myelin=r.read(myelinN)
+        surface=r.read(surfaceN)
+
+        surfMap=projectOnSurface(myelin, surface)
+
+        w=aims.Writer()
+        w.write(surfMap, surfMapN)
     else:
         print 'Usage:'
-        print 'python projectT1T2onSurface.py myelinImage surface'
+        print 'python projectT1T2onSurface.py myelinImage surface map'
 
 if __name__ == "__main__":
      arguments=sys.argv
