@@ -1,21 +1,33 @@
 from soma import aims
 import numpy as np
+import sys
 
 t=0.8
 
 def projectOnSurface(myelin, surface):
     norm=surface.normal()
     vert=surface.vertex()
-    Nv=vert.size
+    Nv=vert.size()
 
-    surfMap=aims.TimeTexture('float')
+    surfMap=aims.TimeTexture('FLOAT')
     surfMap[0].resize(Nv)
+    dx, dy, dz, dt=myelin.getVoxelSize()
+    volVox=aims.Volume(myelin.getSizeX(), myelin.getSizeY(), myelin.getSizeZ(), myelin.getSizeT(), 'FLOAT')
+    volVox.header().update(myelin.header())
+    volVox.fill(0.0)
+
+    print dx, dy, dz
 
     for i in range(Nv):
         v=vert[i]+t*norm[i]
-        val=myelin(v)
+        x=int(round(v[0]/dx))
+        y=int(round(v[1]/dy))
+        z=int(round(v[2]/dz))
+
+        val=myelin.value(x,y,z)
+        volVox.setValue(val, x,y,z)
         surfMap[0][i]=val
-    return surfMap
+    return surfMap, volVox
 
 
 def main(arguments):
@@ -28,10 +40,11 @@ def main(arguments):
         myelin=r.read(myelinN)
         surface=r.read(surfaceN)
 
-        surfMap=projectOnSurface(myelin, surface)
+        surfMap,volOut=projectOnSurface(myelin, surface)
 
         w=aims.Writer()
         w.write(surfMap, surfMapN)
+        #w.write(volOut, 'midVoxels.nii')
     else:
         print 'Usage:'
         print 'python projectT1T2onSurface.py myelinImage surface map'
